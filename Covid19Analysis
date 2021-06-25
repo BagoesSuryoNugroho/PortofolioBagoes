@@ -1,0 +1,70 @@
+-- Covid-19 Data Exploration
+-- Skills used : Joins, CTE's, Temp Tables, Windows Function, Aggregate Functions, and Creating Views
+
+-- Select Data we will used for further analysis
+SELECT *
+FROM `Data_Covid19`
+WHERE CONTINENT IS NOT NULL
+ORDER BY 3,4
+LIMIT 100;
+
+-- Total Cases for each countries
+SELECT location, SUM(total_cases) AS Positive_Case, population
+FROM `Data_Covid19`
+GROUP BY location
+ORDER BY location;
+
+-- Total Cases for each countries ordered by number of positive case (descending)
+SELECT location, SUM(total_cases) AS Positive_Case, population
+FROM `Data_Covid19`
+GROUP BY location
+ORDER BY positive_case desc;
+
+-- Percentage of Positive Cases for each countries ordered by Percent Population Infected (descending)
+SELECT location, MAX(total_cases) AS Positive_Case, population, (MAX(total_cases)/population)*100 AS PercentPopulationInfected
+FROM `Data_Covid19`
+GROUP BY location
+ORDER BY PercentPopulationInfected desc, location;
+
+-- Total Cases for each continents ordered by number of positive case (descending)
+SELECT continent, SUM(new_cases) AS Positive_Case, sum(population)
+FROM `Data_Covid19`
+GROUP BY continent
+ORDER BY positive_case desc;
+
+-- Percentage of Positive Cases for each continents ordered by Percent Population Infected (descending)
+SELECT continent, sum(new_cases) AS Positive_Case, sum(population), (sum(new_cases)/sum(population))*100 AS PercentPopulationInfected
+FROM `Data_Covid19`
+GROUP BY continent
+ORDER BY PercentPopulationInfected desc, continent;
+
+-- Percentage of Positive Cases for each countries compared to GDP Per Capita 
+SELECT location, (MAX(total_cases)/population)*100 AS PercentPopulationInfected,GDP_per_capita
+FROM `Data_Covid19`
+GROUP BY location
+-- ORDER BY GDP_per_capita DESC
+ORDER BY GDP_per_capita, PercentPopulationInfected desc;
+
+-- Total Cases for each countries compared to Total Death
+SELECT location, SUM(new_cases) AS Positive_Case, SUM(new_deaths) AS TotalDeathCount, (sum(new_deaths)/sum(new_cases))*100 AS PercentDeathPerPositive
+FROM `Data_Covid19`
+GROUP BY location
+ORDER BY PercentDeathPerPositive desc;
+
+-- Occurance of the Highest Case number in each countries	
+SELECT location, date, MAX(new_cases) as HighestCases
+FROM `Data_Covid19`
+GROUP BY location
+ORDER BY HighestCases desc;
+
+-- Find the total case and percentation population infected from countries name like 'Indo'
+SELECT Location, Population, SUM(new_cases) as HighestInfectionCount,  (SUM(new_cases)/population)*100 as PercentPopulationInfected
+FROM `Data_Covid19`
+WHERE location like '%Indo%'
+GROUP BY Location, Population
+ORDER BY PercentPopulationInfected desc;
+
+/*
+-- ORDER BY GDP_per_capita DESC
+-- MAX(cast(Total_deaths as int)) as TotalDeathCount
+*/
